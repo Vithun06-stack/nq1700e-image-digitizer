@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NQ1700E Image Digitizer</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Brother Innov-is NQ1700E</p>
+            <h1>Image to embroidery stitch file</h1>
+          </div>
+          <div class="machine-chip">
+            <span>6 x 10 in area</span>
+            <strong>PES export</strong>
+          </div>
+        </header>
+
+        <section class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+          <div class="drop-copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v11m0-11 4 4m-4-4-4 4M5 14v4a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-4" />
+            </svg>
+            <div>
+              <h2>Drop or choose an image</h2>
+              <p>PNG, JPG, WebP, or SVG. Transparent backgrounds are preserved.</p>
+            </div>
+            <button id="sampleBtn" class="secondary" type="button">Try sample</button>
+          </div>
+        </section>
+
+        <section class="stage-grid">
+          <div class="preview-panel">
+            <div class="panel-head">
+              <h2>Original</h2>
+              <span id="imageMeta">No image loaded</span>
+            </div>
+            <canvas id="sourceCanvas"></canvas>
+          </div>
+
+          <div class="preview-panel">
+            <div class="panel-head">
+              <h2>Simplified artwork</h2>
+              <span id="simplifiedMeta">Generated before machine export</span>
+            </div>
+            <canvas id="simplifiedCanvas"></canvas>
+          </div>
+
+          <div class="preview-panel">
+            <div class="panel-head">
+              <h2>App stitch plan</h2>
+              <span id="appPlanMeta">Waiting for image</span>
+            </div>
+            <canvas id="appPlanCanvas"></canvas>
+          </div>
+
+          <div class="preview-panel">
+            <div class="panel-head">
+              <h2>Machine PES preview</h2>
+              <span id="stitchMeta">Waiting for image</span>
+            </div>
+            <canvas id="stitchCanvas"></canvas>
+          </div>
+        </section>
+
+        <section class="status-strip" aria-live="polite">
+          <div>
+            <strong id="statusTitle">Ready</strong>
+            <span id="statusText">Load artwork to start digitizing.</span>
+          </div>
+          <progress id="progress" value="0" max="100"></progress>
+        </section>
+      </section>
+
+      <aside class="controls">
+        <section class="control-group">
+          <h2>Fit</h2>
+          <label>
+            Hoop width
+            <span><input id="designWidth" type="number" min="0.5" max="6" step="0.1" value="5.0"> in</span>
+          </label>
+          <label>
+            Hoop height
+            <span><input id="designHeight" type="number" min="0.5" max="10" step="0.1" value="7.0"> in</span>
+          </label>
+          <button id="fitHoop" type="button">Use 6 x 10 hoop</button>
+        </section>
+
+        <section class="control-group">
+          <h2>Digitize</h2>
+          <label>
+            Embroidery style
+            <span>
+              <select id="embroideryStyle">
+                <option value="detailed patch" selected>Detailed patch</option>
+                <option value="simple patch">Simple patch</option>
+                <option value="line art">Line art</option>
+                <option value="applique-ready">Applique-ready</option>
+              </select>
+            </span>
+          </label>
+          <label>
+            Detail level
+            <span>
+              <select id="detailLevel">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </span>
+          </label>
+          <label>
+            Thread colors
+            <span><input id="colorCount" type="number" min="1" max="10" step="1" value="6"></span>
+          </label>
+          <label>
+            Stitch length
+            <span><input id="stitchLength" type="number" min="1.0" max="6.0" step="0.1" value="2.5"> mm</span>
+          </label>
+          <label>
+            Fill spacing
+            <span><input id="fillSpacing" type="number" min="0.25" max="2.0" step="0.05" value="0.4"> mm</span>
+          </label>
+          <label>
+            Min line width
+            <span><input id="minLineWidth" type="number" min="0.5" max="3.0" step="0.1" value="1.0"> mm</span>
+          </label>
+          <label>
+            Ignore tiny regions
+            <span><input id="minRegionSize" type="number" min="0" max="5000" step="5" value="0"> px</span>
+          </label>
+          <label class="toggle">
+            <input id="transparentOnly" type="checkbox" checked>
+            Ignore transparent background
+          </label>
+          <label class="toggle">
+            <input id="preserveText" type="checkbox" checked>
+            Preserve text exactly
+          </label>
+          <label class="toggle">
+            <input id="rebuildText" type="checkbox" checked>
+            Clean detected text contours
+          </label>
+          <label class="toggle">
+            <input id="preserveTextStyle" type="checkbox" checked>
+            Preserve original text style
+          </label>
+          <label class="toggle">
+            <input id="showJumps" type="checkbox">
+            Show jumps
+          </label>
+          <button id="digitizeBtn" type="button" disabled>Make embroidery file</button>
+        </section>
+
+        <section class="control-group">
+          <h2>Quality</h2>
+          <div id="qualityPanel" class="quality-empty">Convert artwork to see embroidery warnings.</div>
+        </section>
+
+        <section class="control-group">
+          <h2>Colour-change table</h2>
+          <div id="palette" class="palette-empty">No palette yet</div>
+        </section>
+
+        <section class="control-group">
+          <h2>Export</h2>
+          <div class="stats">
+            <div><span>Stitches</span><strong id="stitchCount">0</strong></div>
+            <div><span>Stops</span><strong id="stopCount">0</strong></div>
+            <div><span>Size</span><strong id="sizeReadout">0 x 0 in</strong></div>
+          </div>
+          <button id="downloadPes" type="button" disabled>Download PES, recommended for Brother</button>
+          <button id="downloadDst" type="button" disabled>Download DST fallback</button>
+          <button id="downloadUsb" type="button" disabled>Download Brother USB Package</button>
+          <button id="downloadSvg" type="button" disabled>Download SVG preview</button>
+          <button id="downloadPng" type="button" disabled>Download PNG preview</button>
+          <button id="downloadJson" type="button" disabled>Download project JSON</button>
+          <p class="note">PES is recommended for Brother machines because it stores Brother-compatible embroidery information better than DST.</p>
+          <p class="note">DST does not store RGB thread colours. Use the thread order shown here when changing colours on the embroidery machine.</p>
+          <p class="note">For Brother Innov-is NQ1700E, use PES as the recommended machine file. DST is available as a fallback.</p>
+          <p class="note">Save the PES file directly to the root of the USB drive, not inside a folder.</p>
+          <p class="note">Project JSON is for editing only. It is not a machine-ready embroidery file.</p>
+        </section>
+
+        <section class="control-group">
+          <h2>Brother compatibility</h2>
+          <p class="note">Recommended file: PES</p>
+          <p class="note">Fallback file: DST</p>
+          <p class="note">Use simple filenames and keep the file in the USB root directory.</p>
+          <p class="note">Do not store too many designs on the USB. Check hoop size before stitching.</p>
+          <p class="note">Do not use unsupported file types.</p>
+        </section>
+      </aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
