@@ -77,5 +77,11 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`NQ1700E digitizer running at http://127.0.0.1:${port}/`);
+  try {
+    if (process.stdout?.writable) {
+      process.stdout.write(`NQ1700E digitizer running at http://127.0.0.1:${port}/\n`);
+    }
+  } catch {
+    // Hidden Windows background launches may not have a writable console.
+  }
 });

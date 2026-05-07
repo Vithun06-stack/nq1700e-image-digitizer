@@ -2,6 +2,14 @@
 
 Local browser tool and API for turning uploaded artwork into stitch previews, project JSON, and Brother-first machine files for the Brother Innov-is NQ1700E.
 
+## Online app
+
+This GitHub repository stores the code. It does not host the app by itself.
+
+To make a public app link, deploy this repository to Vercel. The project includes a Vercel-compatible API route at `api/convert.js`.
+
+After deployment, use the Vercel URL as the public app link.
+
 ## Run locally
 
 This app is not hosted by GitHub automatically. The link below only works after the local Node server is running on your computer.
