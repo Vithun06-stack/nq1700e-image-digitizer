@@ -15,22 +15,35 @@ After deployment, use the Vercel URL as the public app link.
 This app is not hosted by GitHub automatically. The link below only works after the local Node server is running on your computer.
 
 ```bash
-npm start
+npm install
+npm run dev
 ```
 
 Then open:
 
 <http://127.0.0.1:4173/>
 
-If the browser cannot open that address, make sure the terminal still shows:
+If port `4173` is busy, the server automatically tries the next available port and prints the exact working URL.
+
+If the browser cannot open the address, make sure the terminal shows the startup banner:
 
 ```text
-NQ1700E digitizer running at http://127.0.0.1:4173/
+NQ1700E Digitizer Running
+Frontend: http://127.0.0.1:4173/
+Backend API: http://127.0.0.1:4173/api/convert
+Health: http://127.0.0.1:4173/health
+Embroidery Engine: ACTIVE
+PES Export: ACTIVE
+DST Export: ACTIVE
 ```
+
+You can also check server health at:
+
+<http://127.0.0.1:4173/health>
 
 ## Use
 
-1. Start the app with `npm start`, then open <http://127.0.0.1:4173/>.
+1. Start the app with `npm run dev` or `npm start`, then open the frontend URL printed in the terminal.
 2. Drop an image into the upload area, or press **Try sample**.
 3. Press **Fit to hoop** if the artwork should fill the 6 x 10 inch embroidery area.
 4. Choose max colours, stitch length, fill spacing, minimum line width, and the tiny-region cleanup threshold.

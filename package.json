@@ -4,7 +4,10 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "dev": "node server.js",
     "start": "node server.js",
+    "build": "node scripts/build-check.js",
+    "doctor": "node scripts/build-check.js",
     "test": "node tests/run-tests.js"
   }
 }
